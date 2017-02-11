@@ -63,23 +63,32 @@ Theta2_grad = zeros(size(Theta2));
 %
 
 % activations of layer 2 & 3. size: m * layer_size.
-a2 = sigmoid([ones(m, 1) X] * Theta1');
-h = sigmoid([ones(m, 1) a2] * Theta2');
+X = [ones(m, 1) X]; % need this for backpropagation
+a2 = sigmoid(X * Theta1');
+a2 = [ones(m, 1) a2]; % need this for backpropagation
+h = sigmoid(a2 * Theta2');
 
-% recode y into a m by num_labels matrix
-% method 1: a bit obscure
-% yy = zeros(m, num_labels);
-% idx = sub2ind(size(yy), 1:m, y'); % these are the linear indices where yy = 1
-% yy(idx) = 1;
-
-% method 2:
+% recode y into a m by num_labels logical matrix
 yy = repmat(1:num_labels, m, 1) == y; % make m rows of 1:K and compute the logical matrix
 
 J = - sum(sum(log(h) .* yy + log(1 - h) .* (1 - yy))) / m; % unregularized
-J = J + lambda / 2 / m * (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2))); % regularized
 
+% for regularization, the bias terms are ignored
+Theta1_tmp = Theta1;
+Theta1_tmp(:, 1) = 0;
+Theta2_tmp = Theta2;
+Theta2_tmp(:, 1) = 0;
 
+J = J + lambda / 2 / m * (sum(sum(Theta1_tmp .^ 2)) + sum(sum(Theta2_tmp .^ 2))); % regularized
 
+d3 = h - yy;
+d2 = (d3 * Theta2) .* (a2 .* (1 - a2)); % doesn't need sigmoidGradient
+
+Theta2_grad = d3' * a2 ./ m; % unregularized
+Theta1_grad = d2(:, 2:end)' * X ./ m; % unregularized
+
+Theta2_grad = Theta2_grad + lambda / m * Theta2_tmp; % regularized
+Theta1_grad = Theta1_grad + lambda / m * Theta1_tmp; % regularized
 
 
 
