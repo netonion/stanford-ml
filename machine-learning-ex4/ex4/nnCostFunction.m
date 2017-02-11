@@ -62,7 +62,21 @@ Theta2_grad = zeros(size(Theta2));
 %               and Theta2_grad from Part 2.
 %
 
+% activations of layer 2 & 3. size: m * layer_size.
+a2 = sigmoid([ones(m, 1) X] * Theta1');
+h = sigmoid([ones(m, 1) a2] * Theta2');
 
+% recode y into a m by num_labels matrix
+% method 1: a bit obscure
+% yy = zeros(m, num_labels);
+% idx = sub2ind(size(yy), 1:m, y'); % these are the linear indices where yy = 1
+% yy(idx) = 1;
+
+% method 2:
+yy = repmat(1:num_labels, m, 1) == y; % make m rows of 1:K and compute the logical matrix
+
+J = - sum(sum(log(h) .* yy + log(1 - h) .* (1 - yy))) / m; % unregularized
+J = J + lambda / 2 / m * (sum(sum(Theta1(:, 2:end) .^ 2)) + sum(sum(Theta2(:, 2:end) .^ 2))); % regularized
 
 
 
