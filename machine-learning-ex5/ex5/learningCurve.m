@@ -53,6 +53,12 @@ error_val   = zeros(m, 1);
 
 % ---------------------- Sample Solution ----------------------
 
+for i = 1:m
+  X_ = [ones(i, 1) X(1:i, :)];
+  [theta] = trainLinearReg(X_, y(1:i), lambda);
+  error_train(i) = linearRegCostFunction(X_, y(1:i), theta, 0);
+  error_val(i) = linearRegCostFunction([ones(size(Xval, 1), 1) Xval], yval, theta, 0);
+end
 
 
 
