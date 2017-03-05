@@ -21,6 +21,11 @@ idx = zeros(size(X,1), 1);
 % Note: You can use a for-loop over the examples to compute this.
 %
 
+for i=1:size(X,1)
+  vectors = X(i, :) - centroids; % returns the vectors from each centroid to X(i) in a K x n vector
+  distances = sum(vectors .^ 2, 2);
+  [~, idx(i)] = min(distances);
+end
 
 
 

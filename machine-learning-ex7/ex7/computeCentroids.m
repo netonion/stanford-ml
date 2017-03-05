@@ -26,6 +26,10 @@ centroids = zeros(K, n);
 % Note: You can use a for-loop over the centroids to compute this.
 %
 
+for i=1:K
+  ind = find(idx == i); % find the indices of examples that belong to group i
+  centroids(i, :) = sum(X(ind, :)) ./ size(ind, 1);
+end
 
 
 
