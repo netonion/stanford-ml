@@ -40,6 +40,15 @@ Theta_grad = zeros(size(Theta));
 %                     partial derivatives w.r.t. to each element of Theta
 %
 
+error = (X * Theta' - Y) .* R;
+
+J = sum(sum(error .^ 2 )) / 2; % unregularized
+J = J + lambda * (sum(sum(X .^ 2)) + sum(sum(Theta .^ 2))) / 2; % regularized
+
+X_grad = error * Theta; % unregularized
+X_grad = X_grad + lambda * X; % regularized
+Theta_grad = error' * X; % unregularized
+Theta_grad = Theta_grad + lambda * Theta; % regularized
 
 
 
